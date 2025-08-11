@@ -35,3 +35,7 @@ python3 src/risksim.py --portfolio data/sample_portfolio.csv \
 - VaR/CVaR are computed on the loss distribution; in plots, the vertical lines show the corresponding returns (negative of losses).
 
 - If history rows < 100, widen the date range.
+
+# Live
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://riskradar-grittor.streamlit.app)
