@@ -20,8 +20,8 @@ venv/
 .idea/
 .vscode/
 
-# Outputs
+# Outputs (scope to out/ only)
 out/
-*.png
-*.csv
-*.json
+out/**/*.png
+out/**/*.csv
+out/**/*.json
