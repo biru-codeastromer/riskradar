@@ -89,6 +89,12 @@ def _download_df_button(df: pd.DataFrame, filename: str, label: str):
 
 st.title("RiskRadar")
 st.caption("Monte Carlo VaR/CVaR with optional historical correlation (free Yahoo data).")
+st.markdown("""
+This application simulates the potential returns of your stock portfolio to estimate its risk.
+- **Value at Risk (VaR)**: The maximum loss you can expect at a certain confidence level. For example, a 95% VaR of 5% means there is a 95% chance your portfolio will not lose more than 5% on a given day.
+- **Conditional Value at Risk (CVaR)**: The expected loss if you are in the tail of the distribution (i.e., if the VaR threshold is breached). It answers the question: "If things go badly, how bad are they likely to be?"
+""")
+
 
 left, right = st.columns([0.62, 0.38], gap="large")
 
@@ -98,18 +104,18 @@ with st.sidebar:
     uploaded = st.file_uploader("Portfolio CSV", type=["csv"], help="Columns: ticker,weight[,mu,sigma]")
     use_sample = st.checkbox("Use sample portfolio (data/sample_portfolio.csv)", value=(uploaded is None))
 
-    use_history = st.checkbox("Use historical data (Yahoo Finance)", value=True)
+    use_history = st.checkbox("Use historical data (Yahoo Finance)", value=True, help="If checked, mu, sigma, and correlation will be estimated from historical data, ignoring any values in the uploaded CSV.")
     start_date = st.date_input("History start", value=pd.to_datetime("2022-01-01").date())
     end_date = st.date_input("History end", value=pd.Timestamp.today().date())
 
-    method = st.selectbox("Method", options=["mc", "hist"], index=0)
-    engine = st.selectbox("Engine (MC uncorrelated)", options=["numpy", "numba"], index=1)
+    method = st.selectbox("Method", options=["mc", "hist"], index=0, help="**mc**: Monte Carlo simulation (geometric Brownian motion). **hist**: Historical simulation (draws from historical returns).")
+    engine = st.selectbox("Engine (MC uncorrelated)", options=["numpy", "numba"], index=1, help="**numba**: a faster, compiled version for uncorrelated Monte Carlo simulation.")
 
-    paths = st.number_input("Paths", value=200_000, min_value=10_000, step=50_000)
-    horizon = st.number_input("Horizon (days)", value=1, min_value=1, max_value=252, step=1)
-    alpha = st.select_slider("Confidence (alpha)", options=[0.90, 0.95, 0.975, 0.99], value=0.95)
-    shock = st.number_input("Uniform shock (e.g., -0.05 for -5%)", value=0.0, step=0.01, format="%.4f")
-    seed = st.number_input("Random seed (optional)", value=7, step=1)
+    paths = st.number_input("Paths", value=200_000, min_value=10_000, step=50_000, help="Number of simulation paths. More paths give more accurate results but take longer to run.")
+    horizon = st.number_input("Horizon (days)", value=1, min_value=1, max_value=252, step=1, help="The investment horizon in trading days.")
+    alpha = st.select_slider("Confidence (alpha)", options=[0.90, 0.95, 0.975, 0.99], value=0.95, help="The confidence level for VaR and CVaR.")
+    shock = st.number_input("Uniform shock (e.g., -0.05 for -5%)", value=0.0, step=0.01, format="%.4f", help="A uniform shock applied to all simulated returns. Use this to model market-wide events.")
+    seed = st.number_input("Random seed (optional)", value=7, step=1, help="A seed for the random number generator to ensure reproducibility.")
 
     run = st.button("Run simulation", type="primary", use_container_width=True)
 
